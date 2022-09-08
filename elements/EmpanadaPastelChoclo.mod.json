@@ -1,0 +1,49 @@
+{
+  "_fv": 33,
+  "_type": "item",
+  "definition": {
+    "renderType": 0,
+    "texture": "empanada_pastel_choclo",
+    "customModelName": "Normal",
+    "name": "Empanada Pastel Choclo",
+    "rarity": "RARE",
+    "creativeTab": {
+      "value": "CUSTOM:EmpanadaLand"
+    },
+    "stackSize": 64,
+    "enchantability": 0,
+    "useDuration": 32,
+    "toolType": 1.0,
+    "damageCount": 0,
+    "recipeRemainder": {
+      "value": ""
+    },
+    "destroyAnyBlock": false,
+    "immuneToFire": false,
+    "stayInGridWhenCrafting": false,
+    "damageOnCrafting": false,
+    "enableMeleeDamage": false,
+    "damageVsEntity": 0.0,
+    "specialInfo": [
+      "Empanada Pastel de Choclo",
+      "El mejor invento",
+      "Visión Nocturna"
+    ],
+    "hasGlow": false,
+    "guiBoundTo": "<NONE>",
+    "inventorySize": 9,
+    "inventoryStackSize": 64,
+    "onFinishUsingItem": {
+      "name": "EmpanadaPastelChocloPlayerFinishesUsingItem"
+    },
+    "isFood": true,
+    "nutritionalValue": 5,
+    "saturation": 0.6,
+    "eatResultItem": {
+      "value": ""
+    },
+    "isMeat": true,
+    "isAlwaysEdible": true,
+    "animation": "eat"
+  }
+}

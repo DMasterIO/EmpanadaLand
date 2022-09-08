@@ -1,0 +1,11 @@
+{
+  "_fv": 33,
+  "_type": "tab",
+  "definition": {
+    "name": "Empanada Land",
+    "icon": {
+      "value": "CUSTOM:EmpanadaQueso"
+    },
+    "showSearch": true
+  }
+}
