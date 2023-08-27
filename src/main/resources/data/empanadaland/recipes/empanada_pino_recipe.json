@@ -1,0 +1,30 @@
+{
+  "group": "empanada_land",
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "0 2",
+    " 4 ",
+    "6 8"
+  ],
+  "key": {
+    "0": {
+      "item": "empanadaland:masa_madre"
+    },
+    "2": {
+      "item": "empanadaland:masa_madre"
+    },
+    "4": {
+      "item": "minecraft:beef"
+    },
+    "6": {
+      "item": "empanadaland:masa_madre"
+    },
+    "8": {
+      "item": "empanadaland:masa_madre"
+    }
+  },
+  "result": {
+    "item": "empanadaland:empanada_pino",
+    "count": 2
+  }
+}

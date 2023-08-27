@@ -1,0 +1,48 @@
+{
+  "_fv": 43,
+  "_type": "recipe",
+  "definition": {
+    "recipeType": "Crafting",
+    "recipeRetstackSize": 2,
+    "group": "",
+    "cookingBookCategory": "MISC",
+    "xpReward": 0.0,
+    "cookingTime": 200,
+    "craftingBookCategory": "MISC",
+    "recipeShapeless": false,
+    "recipeSlots": [
+      {
+        "value": "CUSTOM:MasaMadre"
+      },
+      {
+        "value": ""
+      },
+      {
+        "value": "CUSTOM:MasaMadre"
+      },
+      {
+        "value": "Blocks.WHEAT"
+      },
+      {
+        "value": "Items.WHEAT"
+      },
+      {
+        "value": "Blocks.WHEAT"
+      },
+      {
+        "value": "CUSTOM:MasaMadre"
+      },
+      {
+        "value": ""
+      },
+      {
+        "value": "CUSTOM:MasaMadre"
+      }
+    ],
+    "recipeReturnStack": {
+      "value": "CUSTOM:EmpanadaPastelChoclo"
+    },
+    "name": "empanada_pastel_choclo_recipe",
+    "namespace": "mod"
+  }
+}

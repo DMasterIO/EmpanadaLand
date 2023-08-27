@@ -6,7 +6,13 @@
       "sortid": 2,
       "compiles": true,
       "locked_code": false,
-      "registry_name": "empanada_queso"
+      "registry_name": "empanada_queso",
+      "metadata": {
+        "files": [
+          "src/main/resources/assets/empanadaland/models/item/empanada_queso.json",
+          "src/main/java/io/dmaster/empanadaland/item/EmpanadaQuesoItem.java"
+        ]
+      }
     },
     {
       "name": "EmpanadaLand",
@@ -14,7 +20,10 @@
       "sortid": 4,
       "compiles": true,
       "locked_code": false,
-      "registry_name": "empanada_land"
+      "registry_name": "empanada_land",
+      "metadata": {
+        "files": []
+      }
     },
     {
       "name": "EmpanadaQuesoPlayerFinishesUsingItem",
@@ -24,6 +33,9 @@
       "locked_code": false,
       "registry_name": "empanada_queso_player_finishes_using_item",
       "metadata": {
+        "files": [
+          "src/main/java/io/dmaster/empanadaland/procedures/EmpanadaQuesoPlayerFinishesUsingItemProcedure.java"
+        ],
         "dependencies": [
           {
             "name": "entity",
@@ -40,6 +52,9 @@
       "locked_code": false,
       "registry_name": "empanada_pino_player_finishes_using_item",
       "metadata": {
+        "files": [
+          "src/main/java/io/dmaster/empanadaland/procedures/EmpanadaPinoPlayerFinishesUsingItemProcedure.java"
+        ],
         "dependencies": [
           {
             "name": "entity",
@@ -54,7 +69,13 @@
       "sortid": 1,
       "compiles": true,
       "locked_code": false,
-      "registry_name": "empanada_pino"
+      "registry_name": "empanada_pino",
+      "metadata": {
+        "files": [
+          "src/main/java/io/dmaster/empanadaland/item/EmpanadaPinoItem.java",
+          "src/main/resources/assets/empanadaland/models/item/empanada_pino.json"
+        ]
+      }
     },
     {
       "name": "EmpanadaPastelChocloPlayerFinishesUsingItem",
@@ -64,6 +85,9 @@
       "locked_code": false,
       "registry_name": "empanada_pastel_choclo_player_finishes_using_item",
       "metadata": {
+        "files": [
+          "src/main/java/io/dmaster/empanadaland/procedures/EmpanadaPastelChocloPlayerFinishesUsingItemProcedure.java"
+        ],
         "dependencies": [
           {
             "name": "entity",
@@ -78,7 +102,244 @@
       "sortid": 3,
       "compiles": true,
       "locked_code": false,
-      "registry_name": "empanada_pastel_choclo"
+      "registry_name": "empanada_pastel_choclo",
+      "metadata": {
+        "files": [
+          "src/main/resources/assets/empanadaland/models/item/empanada_pastel_choclo.json",
+          "src/main/java/io/dmaster/empanadaland/item/EmpanadaPastelChocloItem.java"
+        ]
+      }
+    },
+    {
+      "name": "VasoChupilca",
+      "type": "item",
+      "sortid": 8,
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "vaso_chupilca",
+      "metadata": {
+        "files": [
+          "src/main/java/io/dmaster/empanadaland/item/VasoChupilcaItem.java",
+          "src/main/resources/assets/empanadaland/models/item/vaso_chupilca.json"
+        ]
+      }
+    },
+    {
+      "name": "VasoChupilcaPlayerFinishesUsingItem",
+      "type": "procedure",
+      "sortid": 9,
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "vaso_chupilca_player_finishes_using_item",
+      "metadata": {
+        "files": [
+          "src/main/java/io/dmaster/empanadaland/procedures/VasoChupilcaPlayerFinishesUsingItemProcedure.java"
+        ],
+        "dependencies": [
+          {
+            "name": "entity",
+            "type": "entity"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Queso",
+      "type": "item",
+      "sortid": 10,
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "queso",
+      "metadata": {
+        "files": [
+          "src/main/resources/assets/empanadaland/models/item/queso.json",
+          "src/main/java/io/dmaster/empanadaland/item/QuesoItem.java"
+        ]
+      }
+    },
+    {
+      "name": "MasaMadrePlayerFinishesUsingItem",
+      "type": "procedure",
+      "sortid": 11,
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "masa_madre_player_finishes_using_item",
+      "metadata": {
+        "files": [
+          "src/main/java/io/dmaster/empanadaland/procedures/MasaMadrePlayerFinishesUsingItemProcedure.java"
+        ],
+        "dependencies": [
+          {
+            "name": "entity",
+            "type": "entity"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MasaMadre",
+      "type": "item",
+      "sortid": 11,
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "masa_madre",
+      "metadata": {
+        "files": [
+          "src/main/resources/assets/empanadaland/models/item/masa_madre.json",
+          "src/main/java/io/dmaster/empanadaland/item/MasaMadreItem.java"
+        ]
+      }
+    },
+    {
+      "name": "Harina",
+      "type": "item",
+      "sortid": 12,
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "harina",
+      "metadata": {
+        "files": [
+          "src/main/java/io/dmaster/empanadaland/item/HarinaItem.java",
+          "src/main/resources/assets/empanadaland/models/item/harina.json"
+        ]
+      }
+    },
+    {
+      "name": "HarinaRecipe",
+      "type": "recipe",
+      "sortid": 13,
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "harina_recipe",
+      "metadata": {
+        "files": [
+          "src/main/resources/data/empanadaland/recipes/harina_recipe.json"
+        ]
+      }
+    },
+    {
+      "name": "QuesoRecipe",
+      "type": "recipe",
+      "sortid": 14,
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "queso_recipe",
+      "metadata": {
+        "files": [
+          "src/main/resources/data/empanadaland/recipes/queso_recipe.json"
+        ]
+      }
+    },
+    {
+      "name": "MasaRecipe",
+      "type": "recipe",
+      "sortid": 15,
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "masa_recipe",
+      "metadata": {
+        "files": [
+          "src/main/resources/data/empanadaland/recipes/masa_recipe.json"
+        ]
+      }
+    },
+    {
+      "name": "EmpanadaQuesoRecipe",
+      "type": "recipe",
+      "sortid": 16,
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "empanada_queso_recipe",
+      "metadata": {
+        "files": [
+          "src/main/resources/data/empanadaland/recipes/empanada_queso_recipe.json"
+        ]
+      }
+    },
+    {
+      "name": "EmpanadaPinoRecipe",
+      "type": "recipe",
+      "sortid": 17,
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "empanada_pino_recipe",
+      "metadata": {
+        "files": [
+          "src/main/resources/data/empanadaland/recipes/empanada_pino_recipe.json"
+        ]
+      }
+    },
+    {
+      "name": "VasoChupilcaRecipe",
+      "type": "recipe",
+      "sortid": 18,
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "vaso_chupilca_recipe",
+      "metadata": {
+        "files": [
+          "src/main/resources/data/empanadaland/recipes/vaso_chupilca_recipe.json"
+        ]
+      }
+    },
+    {
+      "name": "VasoTerremotoPlayerFinishesUsingItem",
+      "type": "procedure",
+      "sortid": 19,
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "vaso_terremoto_player_finishes_using_item",
+      "metadata": {
+        "files": [
+          "src/main/java/io/dmaster/empanadaland/procedures/VasoTerremotoPlayerFinishesUsingItemProcedure.java"
+        ],
+        "dependencies": [
+          {
+            "name": "entity",
+            "type": "entity"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VasoTerremoto",
+      "type": "item",
+      "sortid": 19,
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "vaso_terremoto",
+      "metadata": {
+        "files": [
+          "src/main/resources/assets/empanadaland/models/item/vaso_terremoto.json",
+          "src/main/java/io/dmaster/empanadaland/item/VasoTerremotoItem.java"
+        ]
+      }
+    },
+    {
+      "name": "VasoTerremotoRecipe",
+      "type": "recipe",
+      "sortid": 20,
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "vaso_terremoto_recipe",
+      "metadata": {
+        "files": [
+          "src/main/resources/data/empanadaland/recipes/vaso_terremoto_recipe.json"
+        ]
+      }
+    },
+    {
+      "name": "EmpanadaPastelChocloRecipe",
+      "type": "recipe",
+      "sortid": 21,
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "empanada_pastel_choclo_recipe",
+      "metadata": {
+        "files": [
+          "src/main/resources/data/empanadaland/recipes/empanada_pastel_choclo_recipe.json"
+        ]
+      }
     }
   ],
   "variable_elements": [],
@@ -86,9 +347,25 @@
   "language_map": {
     "en_us": {
       "itemGroup.tabempanada_land": "Empanada Land",
+      "item.empanadaland.vaso_chupilca": "Vaso Chupilca",
       "item.empanadaland.empanada_queso": "Empanada Queso",
       "item.empanadaland.empanada_pino": "Empanada Pino",
-      "item.empanadaland.empanada_pastel_choclo": "Empanada Pastel Choclo"
+      "item.empanadaland.queso": "Queso",
+      "item.empanadaland.empanada_pastel_choclo": "Empanada Pastel Choclo",
+      "item.empanadaland.vaso_terremoto": "Vaso Terremoto",
+      "item.empanadaland.masa_madre": "Masa Madre",
+      "item.empanadaland.harina": "Harina"
+    },
+    "es_cl": {
+      "itemGroup.tabempanada_land": "EmpanadaLand",
+      "item.empanadaland.vaso_chupilca": "Vaso de Chupilca",
+      "item.empanadaland.empanada_queso": "Empanada Queso",
+      "item.empanadaland.empanada_pino": "Empanada Pino",
+      "item.empanadaland.queso": "Queso",
+      "item.empanadaland.empanada_pastel_choclo": "Empanada Pastel Choclo",
+      "item.empanadaland.vaso_terremoto": "Vaso de Terremoto",
+      "item.empanadaland.masa_madre": "Masa Madre",
+      "item.empanadaland.harina": "Harina"
     }
   },
   "foldersRoot": {
@@ -108,9 +385,9 @@
     "dependencies": [],
     "dependants": [],
     "mcreatorDependencies": [],
-    "currentGenerator": "forge-1.18.2",
+    "currentGenerator": "forge-1.19.2",
     "modElementsPackage": "io.dmaster.empanadaland",
     "lockBaseModFiles": false
   },
-  "mcreatorVersion": 202200234517
+  "mcreatorVersion": 202300224119
 }

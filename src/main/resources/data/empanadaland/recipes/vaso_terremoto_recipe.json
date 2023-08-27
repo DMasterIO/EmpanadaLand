@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "0 2",
+    " 4 "
+  ],
+  "key": {
+    "0": {
+      "item": "minecraft:melon_slice"
+    },
+    "2": {
+      "item": "minecraft:honey_bottle"
+    },
+    "4": {
+      "item": "minecraft:potion"
+    }
+  },
+  "result": {
+    "item": "empanadaland:vaso_terremoto",
+    "count": 1
+  }
+}

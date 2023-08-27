@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "01",
+    " 3"
+  ],
+  "key": {
+    "0": {
+      "item": "minecraft:gunpowder"
+    },
+    "1": {
+      "item": "minecraft:spider_eye"
+    },
+    "3": {
+      "item": "minecraft:potion"
+    }
+  },
+  "result": {
+    "item": "empanadaland:vaso_chupilca",
+    "count": 1
+  }
+}

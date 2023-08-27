@@ -1,0 +1,48 @@
+{
+  "_fv": 43,
+  "_type": "recipe",
+  "definition": {
+    "recipeType": "Crafting",
+    "recipeRetstackSize": 2,
+    "group": "empanada_land",
+    "cookingBookCategory": "MISC",
+    "xpReward": 0.0,
+    "cookingTime": 200,
+    "craftingBookCategory": "MISC",
+    "recipeShapeless": false,
+    "recipeSlots": [
+      {
+        "value": "CUSTOM:MasaMadre"
+      },
+      {
+        "value": ""
+      },
+      {
+        "value": "CUSTOM:MasaMadre"
+      },
+      {
+        "value": ""
+      },
+      {
+        "value": "Items.BEEF"
+      },
+      {
+        "value": ""
+      },
+      {
+        "value": "CUSTOM:MasaMadre"
+      },
+      {
+        "value": ""
+      },
+      {
+        "value": "CUSTOM:MasaMadre"
+      }
+    ],
+    "recipeReturnStack": {
+      "value": "CUSTOM:EmpanadaPino"
+    },
+    "name": "empanada_pino_recipe",
+    "namespace": "mod"
+  }
+}

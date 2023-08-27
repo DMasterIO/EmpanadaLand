@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "0 2",
+    "345",
+    "6 8"
+  ],
+  "key": {
+    "0": {
+      "item": "empanadaland:masa_madre"
+    },
+    "2": {
+      "item": "empanadaland:masa_madre"
+    },
+    "3": {
+      "item": "minecraft:wheat"
+    },
+    "4": {
+      "item": "minecraft:wheat"
+    },
+    "5": {
+      "item": "minecraft:wheat"
+    },
+    "6": {
+      "item": "empanadaland:masa_madre"
+    },
+    "8": {
+      "item": "empanadaland:masa_madre"
+    }
+  },
+  "result": {
+    "item": "empanadaland:empanada_pastel_choclo",
+    "count": 2
+  }
+}
