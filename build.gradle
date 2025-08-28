@@ -1,11 +1,8 @@
 buildscript {
     repositories {
-        mavenLocal()
-        gradlePluginPortal()
         mavenCentral()
-        // Use backup repository if main is unavailable
+        gradlePluginPortal()
         maven { url = 'https://maven.neoforged.net/releases' }
-        maven { url = 'https://repo1.maven.org/maven2/' }
     }
     dependencies {
         classpath 'net.neoforged.gradle:userdev:7.0.163'
@@ -19,11 +16,8 @@ plugins {
 apply plugin: 'net.neoforged.gradle.userdev'
 
 repositories {
-    mavenLocal()
-    gradlePluginPortal()
     mavenCentral()
     maven { url = 'https://maven.neoforged.net/releases' }
-    maven { url = 'https://repo1.maven.org/maven2/' }
 }
 
 version = '1.0'
