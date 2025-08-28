@@ -13,21 +13,25 @@ import net.minecraft.network.chat.Component;
 import java.util.List;
 
 import io.dmaster.empanadaland.procedures.EmpanadaQuesoPlayerFinishesUsingItemProcedure;
-import io.dmaster.empanadaland.init.EmpanadalandModTabs;
 
 public class EmpanadaQuesoItem extends Item {
 	public EmpanadaQuesoItem() {
-		super(new Item.Properties().tab(EmpanadalandModTabs.TAB_EMPANADA_LAND).stacksTo(64).rarity(Rarity.UNCOMMON).food((new FoodProperties.Builder()).nutrition(5).saturationMod(0.3f).alwaysEat()
-
+		super(new Item.Properties()
+			.stacksTo(64)
+			.rarity(Rarity.UNCOMMON)
+			.food(new FoodProperties.Builder()
+				.nutrition(5)
+				.saturationModifier(0.3f)
+				.alwaysEdible()
 				.build()));
 	}
 
 	@Override
-	public void appendHoverText(ItemStack itemstack, Level world, List<Component> list, TooltipFlag flag) {
-		super.appendHoverText(itemstack, world, list, flag);
+	public void appendHoverText(ItemStack itemstack, Item.TooltipContext context, List<Component> list, TooltipFlag flag) {
+		super.appendHoverText(itemstack, context, list, flag);
 		list.add(Component.literal("Empanada de Queso"));
 		list.add(Component.literal("Jugosa y Caliente"));
-		list.add(Component.literal("Velocidad de ni\u00F1os con caf\u00E9"));
+		list.add(Component.literal("Velocidad de niños con café"));
 	}
 
 	@Override

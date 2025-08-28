@@ -16,15 +16,15 @@ package io.dmaster.empanadaland;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-import net.minecraftforge.network.simple.SimpleChannel;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.network.simple.SimpleChannel;
+import net.neoforged.neoforge.network.NetworkRegistry;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import net.neoforged.neoforge.common.NeoForge;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.FriendlyByteBuf;
@@ -46,20 +46,19 @@ public class EmpanadalandMod {
 	public static final Logger LOGGER = LogManager.getLogger(EmpanadalandMod.class);
 	public static final String MODID = "empanadaland";
 
-	public EmpanadalandMod() {
-		MinecraftForge.EVENT_BUS.register(this);
-		EmpanadalandModTabs.load();
-		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-
-		EmpanadalandModItems.REGISTRY.register(bus);
+	public EmpanadalandMod(IEventBus modEventBus) {
+		NeoForge.EVENT_BUS.register(this);
+		EmpanadalandModTabs.load(modEventBus);
+		
+		EmpanadalandModItems.REGISTRY.register(modEventBus);
 
 	}
 
 	private static final String PROTOCOL_VERSION = "1";
-	public static final SimpleChannel PACKET_HANDLER = NetworkRegistry.newSimpleChannel(new ResourceLocation(MODID, MODID), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
+	public static final SimpleChannel PACKET_HANDLER = NetworkRegistry.newSimpleChannel(ResourceLocation.fromNamespaceAndPath(MODID, MODID), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
 	private static int messageID = 0;
 
-	public static <T> void addNetworkMessage(Class<T> messageType, BiConsumer<T, FriendlyByteBuf> encoder, Function<FriendlyByteBuf, T> decoder, BiConsumer<T, Supplier<NetworkEvent.Context>> messageConsumer) {
+	public static <T> void addNetworkMessage(Class<T> messageType, BiConsumer<T, FriendlyByteBuf> encoder, Function<FriendlyByteBuf, T> decoder, BiConsumer<T, Supplier<RegisterPayloadHandlersEvent.Context>> messageConsumer) {
 		PACKET_HANDLER.registerMessage(messageID, messageType, encoder, decoder, messageConsumer);
 		messageID++;
 	}
@@ -71,16 +70,14 @@ public class EmpanadalandMod {
 	}
 
 	@SubscribeEvent
-	public void tick(TickEvent.ServerTickEvent event) {
-		if (event.phase == TickEvent.Phase.END) {
-			List<AbstractMap.SimpleEntry<Runnable, Integer>> actions = new ArrayList<>();
-			workQueue.forEach(work -> {
-				work.setValue(work.getValue() - 1);
-				if (work.getValue() == 0)
-					actions.add(work);
-			});
-			actions.forEach(e -> e.getKey().run());
-			workQueue.removeAll(actions);
-		}
+	public void tick(ServerTickEvent.Post event) {
+		List<AbstractMap.SimpleEntry<Runnable, Integer>> actions = new ArrayList<>();
+		workQueue.forEach(work -> {
+			work.setValue(work.getValue() - 1);
+			if (work.getValue() == 0)
+				actions.add(work);
+		});
+		actions.forEach(e -> e.getKey().run());
+		workQueue.removeAll(actions);
 	}
 }
