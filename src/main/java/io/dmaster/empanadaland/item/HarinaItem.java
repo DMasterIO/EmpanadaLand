@@ -2,12 +2,13 @@
 package io.dmaster.empanadaland.item;
 
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Item;
 import net.minecraft.network.chat.Component;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 public class HarinaItem extends Item {
 	public HarinaItem() {
@@ -17,8 +18,8 @@ public class HarinaItem extends Item {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack itemstack, Item.TooltipContext context, List<Component> list, TooltipFlag flag) {
-		super.appendHoverText(itemstack, context, list, flag);
-		list.add(Component.literal("Harina sin polvos de hornear"));
+	public void appendHoverText(ItemStack itemstack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> components, TooltipFlag flag) {
+		super.appendHoverText(itemstack, context, display, components, flag);
+		components.accept(Component.literal("Harina sin polvos de hornear"));
 	}
 }

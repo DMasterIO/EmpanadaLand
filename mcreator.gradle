@@ -1,0 +1,39 @@
+// MCreator configuration file for NeoForge 1.21.1
+
+// Apply the NeoForge plugin configuration
+// This file contains MCreator-specific configurations and tasks
+
+// MCreator related tasks
+task cleanMCreator(type: Delete) {
+    delete 'src/main/java/io/dmaster/empanadaland/'
+    delete 'src/main/resources/assets/empanadaland/'
+    delete 'src/main/resources/data/empanadaland/'
+}
+
+// Reobfuscation configuration for NeoForge
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+// Eclipse configuration
+eclipse {
+    project {
+        name = project.name
+    }
+    classpath {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}
+
+// Source sets configuration
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+}

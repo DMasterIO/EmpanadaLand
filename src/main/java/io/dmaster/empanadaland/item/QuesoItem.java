@@ -2,13 +2,14 @@
 package io.dmaster.empanadaland.item;
 
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.network.chat.Component;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 public class QuesoItem extends Item {
 	public QuesoItem() {
@@ -22,9 +23,9 @@ public class QuesoItem extends Item {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack itemstack, Item.TooltipContext context, List<Component> list, TooltipFlag flag) {
-		super.appendHoverText(itemstack, context, list, flag);
-		list.add(Component.literal("Queso fresco"));
-		list.add(Component.literal("ideal para empanadas"));
+	public void appendHoverText(ItemStack itemstack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> components, TooltipFlag flag) {
+		super.appendHoverText(itemstack, context, display, components, flag);
+		components.accept(Component.literal("Queso fresco"));
+		components.accept(Component.literal("ideal para empanadas"));
 	}
 }

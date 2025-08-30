@@ -3,6 +3,7 @@ package io.dmaster.empanadaland.item;
 
 import net.minecraft.world.level.Level;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Item;
@@ -10,7 +11,7 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.network.chat.Component;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 import io.dmaster.empanadaland.procedures.MasaMadrePlayerFinishesUsingItemProcedure;
 
@@ -26,10 +27,10 @@ public class MasaMadreItem extends Item {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack itemstack, Item.TooltipContext context, List<Component> list, TooltipFlag flag) {
-		super.appendHoverText(itemstack, context, list, flag);
-		list.add(Component.literal("Masa Madre"));
-		list.add(Component.literal("ideal para crear empanadas"));
+	public void appendHoverText(ItemStack itemstack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> components, TooltipFlag flag) {
+		super.appendHoverText(itemstack, context, display, components, flag);
+		components.accept(Component.literal("Masa Madre"));
+		components.accept(Component.literal("ideal para crear empanadas"));
 	}
 
 	@Override

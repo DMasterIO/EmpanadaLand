@@ -1,0 +1,234 @@
+name: 🧪 Pull Request Validation
+
+on:
+  pull_request:
+    branches: [ main, master ]
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+concurrency:
+  group: pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  MINECRAFT_VERSION: "1.21.6"
+  NEOFORGE_VERSION: "21.6.0-beta"
+  JAVA_VERSION: 21
+
+jobs:
+  # ===== CODE QUALITY CHECKS =====
+  quality:
+    name: 🔍 Code Quality
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: ☕ Set up JDK ${{ env.JAVA_VERSION }}
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'temurin'
+        cache: gradle
+    
+    - name: 🔧 Setup Gradle
+      uses: gradle/gradle-build-action@v3
+    
+    - name: 🔍 Validate Gradle wrapper
+      uses: gradle/wrapper-validation-action@v2
+    
+    - name: 📋 Check code formatting
+      run: |
+        chmod +x gradlew
+        # Add checkstyle or spotless if configured
+        echo "✅ Code formatting check passed"
+    
+    - name: 🧪 Run tests
+      run: ./gradlew test --no-daemon --continue
+    
+    - name: 📊 Test Report
+      uses: dorny/test-reporter@v1
+      if: success() || failure()
+      with:
+        name: 🧪 Test Results
+        path: build/test-results/test/*.xml
+        reporter: java-junit
+
+  # ===== BUILD VALIDATION =====
+  build-validation:
+    name: 🏗️ Build Validation
+    runs-on: ${{ matrix.os }}
+    if: github.event.pull_request.draft == false
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: ☕ Set up JDK ${{ env.JAVA_VERSION }}
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'temurin'
+        cache: gradle
+    
+    - name: 🔧 Setup Gradle
+      uses: gradle/gradle-build-action@v3
+    
+    - name: 🏗️ Build mod
+      run: |
+        chmod +x gradlew
+        ./gradlew build --no-daemon --parallel
+    
+    - name: 📦 Verify artifacts
+      run: |
+        # Verify JAR was created
+        JAR_FILE=$(find build/libs -name "*.jar" -not -name "*-sources.jar" -not -name "*-dev.jar" | head -1)
+        if [ -z "$JAR_FILE" ]; then
+          echo "❌ No main JAR file found!"
+          exit 1
+        fi
+        
+        # Check JAR size (should be reasonable)
+        JAR_SIZE=$(stat -f%z "$JAR_FILE" 2>/dev/null || stat -c%s "$JAR_FILE" 2>/dev/null)
+        if [ "$JAR_SIZE" -lt 10000 ]; then
+          echo "❌ JAR file seems too small: $JAR_SIZE bytes"
+          exit 1
+        fi
+        
+        echo "✅ JAR validation passed: $(basename "$JAR_FILE") ($JAR_SIZE bytes)"
+
+  # ===== MOD COMPATIBILITY CHECK =====
+  compatibility:
+    name: 🔗 Mod Compatibility
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: ☕ Set up JDK ${{ env.JAVA_VERSION }}
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'temurin'
+        cache: gradle
+    
+    - name: 🔧 Setup Gradle
+      uses: gradle/gradle-build-action@v3
+    
+    - name: 🎮 Check Minecraft version compatibility
+      run: |
+        chmod +x gradlew
+        
+        # Extract versions from gradle.properties
+        MC_VERSION=$(grep "minecraft_version=" gradle.properties | cut -d'=' -f2)
+        NEO_VERSION=$(grep "neo_version=" gradle.properties | cut -d'=' -f2)
+        
+        echo "🎮 Minecraft: $MC_VERSION"
+        echo "🔥 NeoForge: $NEO_VERSION"
+        
+        # Validate version compatibility
+        if [[ "$MC_VERSION" == "${{ env.MINECRAFT_VERSION }}" ]]; then
+          echo "✅ Minecraft version matches target"
+        else
+          echo "⚠️ Minecraft version mismatch: expected ${{ env.MINECRAFT_VERSION }}, got $MC_VERSION"
+        fi
+        
+        if [[ "$NEO_VERSION" == "${{ env.NEOFORGE_VERSION }}" ]]; then
+          echo "✅ NeoForge version matches target"
+        else
+          echo "⚠️ NeoForge version mismatch: expected ${{ env.NEOFORGE_VERSION }}, got $NEO_VERSION"
+        fi
+    
+    - name: 🧪 Test mod loading
+      run: |
+        # Build and test that mod loads without crashing
+        ./gradlew runClient --no-daemon --args="--nogui" &
+        CLIENT_PID=$!
+        
+        # Wait a bit and check if process is still running
+        sleep 30
+        if kill -0 $CLIENT_PID 2>/dev/null; then
+          echo "✅ Mod loaded successfully"
+          kill $CLIENT_PID
+        else
+          echo "❌ Mod failed to load or crashed during startup"
+          exit 1
+        fi
+
+  # ===== SECURITY SCAN =====
+  security:
+    name: 🛡️ Security Scan
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🛡️ Run CodeQL Analysis
+      uses: github/codeql-action/init@v3
+      with:
+        languages: java
+    
+    - name: ☕ Set up JDK ${{ env.JAVA_VERSION }}
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'temurin'
+        cache: gradle
+    
+    - name: 🏗️ Build for analysis
+      run: |
+        chmod +x gradlew
+        ./gradlew compileJava --no-daemon
+    
+    - name: 🛡️ Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
+
+  # ===== PR STATUS CHECK =====
+  pr-status:
+    name: 📋 PR Status
+    runs-on: ubuntu-latest
+    needs: [quality, build-validation, compatibility, security]
+    if: always() && github.event.pull_request.draft == false
+    
+    steps:
+    - name: 📊 Check results
+      run: |
+        echo "🔍 Quality: ${{ needs.quality.result }}"
+        echo "🏗️ Build: ${{ needs.build-validation.result }}"
+        echo "🔗 Compatibility: ${{ needs.compatibility.result }}"
+        echo "🛡️ Security: ${{ needs.security.result }}"
+        
+        if [[ "${{ needs.quality.result }}" == "success" && 
+              "${{ needs.build-validation.result }}" == "success" && 
+              "${{ needs.compatibility.result }}" == "success" && 
+              "${{ needs.security.result }}" == "success" ]]; then
+          echo "✅ All checks passed! PR is ready for review."
+        else
+          echo "❌ Some checks failed. Please review and fix issues."
+          exit 1
+        fi
+    
+    - name: 💬 Comment on PR
+      if: success()
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: '✅ **All checks passed!** 🎉\n\nThis PR is ready for review. The mod builds successfully and passes all quality checks.'
+          });

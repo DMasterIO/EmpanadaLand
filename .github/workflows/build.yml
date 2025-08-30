@@ -1,62 +1,312 @@
-name: Build EmpanadaLand Mod
+name: 🥟 Build & Release EmpanadaLand
 
 on:
   push:
     branches: [ main, master ]
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - 'LICENSE'
   pull_request:
     branches: [ main, master ]
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - 'LICENSE'
   workflow_dispatch:
+    inputs:
+      release_type:
+        description: 'Release type (patch, minor, major)'
+        required: false
+        default: 'patch'
+        type: choice
+        options:
+        - patch
+        - minor
+        - major
+
+env:
+  MINECRAFT_VERSION: "1.21.6"
+  NEOFORGE_VERSION: "21.6.0-beta"
+  JAVA_VERSION: 21
 
 jobs:
-  build:
+  # ===== VALIDATION JOB =====
+  validate:
+    name: 🔍 Validate Build Environment
     runs-on: ubuntu-latest
+    outputs:
+      should_release: ${{ steps.check.outputs.should_release }}
+      current_version: ${{ steps.version.outputs.current_version }}
+      new_version: ${{ steps.version.outputs.new_version }}
     
     steps:
-    - name: Checkout repository
+    - name: 📥 Checkout repository
       uses: actions/checkout@v4
-      
-    - name: Set up JDK 21
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: 🔍 Check if should create release
+      id: check
+      run: |
+        if [[ "${{ github.ref }}" == "refs/heads/master" && "${{ github.event_name }}" == "push" ]]; then
+          echo "should_release=true" >> $GITHUB_OUTPUT
+        else
+          echo "should_release=false" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: 📋 Get current version
+      id: version
+      run: |
+        CURRENT_VERSION=$(grep "mod_version=" gradle.properties | cut -d'=' -f2)
+        echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+        
+        # Calculate new version for releases
+        if [[ "${{ steps.check.outputs.should_release }}" == "true" ]]; then
+          RELEASE_TYPE="${{ github.event.inputs.release_type || 'patch' }}"
+          IFS='.' read -r major minor patch <<< "$CURRENT_VERSION"
+          
+          case $RELEASE_TYPE in
+            major)
+              NEW_VERSION="$((major + 1)).0.0"
+              ;;
+            minor)
+              NEW_VERSION="$major.$((minor + 1)).0"
+              ;;
+            patch)
+              NEW_VERSION="$major.$minor.$((patch + 1))"
+              ;;
+          esac
+          
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "🚀 Will create release with version: $NEW_VERSION"
+        else
+          echo "new_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          echo "📦 Build only, no release will be created"
+        fi
+
+  # ===== BUILD JOB =====
+  build:
+    name: 🏗️ Build Mod
+    runs-on: ubuntu-latest
+    needs: validate
+    outputs:
+      artifact_name: ${{ steps.build_info.outputs.artifact_name }}
+      mod_version: ${{ steps.build_info.outputs.mod_version }}
+    
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: ☕ Set up JDK ${{ env.JAVA_VERSION }}
       uses: actions/setup-java@v4
       with:
-        java-version: '21'
+        java-version: ${{ env.JAVA_VERSION }}
         distribution: 'temurin'
-        
-    - name: Cache Gradle packages
-      uses: actions/cache@v4
+        cache: gradle
+    
+    - name: 🐧 Setup Gradle
+      uses: gradle/gradle-build-action@v3
       with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
-          
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-      
-    - name: Build with Gradle
-      run: ./gradlew build --no-daemon
-      
-    - name: Create dist directory
-      run: mkdir -p dist
-      
-    - name: Copy JAR to dist
+        gradle-home-cache-cleanup: true
+    
+    - name: 🔧 Update version for release
+      if: needs.validate.outputs.should_release == 'true'
       run: |
-        # Find the built JAR file and copy it to dist
-        JAR_FILE=$(find build/libs -name "*.jar" -not -name "*-sources.jar" -not -name "*-dev.jar" | head -1)
-        if [ -n "$JAR_FILE" ]; then
-          cp "$JAR_FILE" dist/
-          echo "Successfully copied: $JAR_FILE to dist/"
-        else
-          echo "Error: No main JAR file found in build/libs"
-          exit 1
-        fi
-        # List what was copied
-        ls -la dist/
+        NEW_VERSION="${{ needs.validate.outputs.new_version }}"
+        sed -i "s/mod_version=.*/mod_version=$NEW_VERSION/" gradle.properties
+        sed -i "s/version = .*/version = '$NEW_VERSION'/" build.gradle
+        echo "📝 Updated version to: $NEW_VERSION"
+    
+    - name: 🔨 Build mod
+      run: |
+        chmod +x gradlew
+        ./gradlew build --no-daemon --parallel --build-cache
+    
+    - name: 📊 Build information
+      id: build_info
+      run: |
+        # Get mod info from gradle.properties
+        MOD_VERSION=$(grep "mod_version=" gradle.properties | cut -d'=' -f2)
+        MOD_NAME=$(grep "mod_name=" gradle.properties | cut -d'=' -f2)
         
-    - name: Upload build artifacts
+        # Find the main JAR file
+        MAIN_JAR=$(find build/libs -name "*.jar" -not -name "*-sources.jar" -not -name "*-dev.jar" | head -1)
+        JAR_NAME=$(basename "$MAIN_JAR")
+        
+        echo "mod_version=$MOD_VERSION" >> $GITHUB_OUTPUT
+        echo "artifact_name=$JAR_NAME" >> $GITHUB_OUTPUT
+        
+        echo "🎯 Mod: $MOD_NAME v$MOD_VERSION"
+        echo "📦 Artifact: $JAR_NAME"
+        echo "🎮 Minecraft: ${{ env.MINECRAFT_VERSION }}"
+        echo "🔥 NeoForge: ${{ env.NEOFORGE_VERSION }}"
+    
+    - name: 🧪 Run tests
+      run: ./gradlew test --no-daemon
+    
+    - name: 📁 Prepare artifacts
+      run: |
+        mkdir -p artifacts
+        
+        # Copy main JAR
+        MAIN_JAR=$(find build/libs -name "*.jar" -not -name "*-sources.jar" -not -name "*-dev.jar" | head -1)
+        cp "$MAIN_JAR" artifacts/
+        
+        # Copy sources JAR if exists
+        SOURCES_JAR=$(find build/libs -name "*-sources.jar" | head -1)
+        if [ -n "$SOURCES_JAR" ]; then
+          cp "$SOURCES_JAR" artifacts/
+        fi
+        
+        # Create build info file
+        cat > artifacts/build-info.txt << EOF
+        EmpanadaLand Mod Build Information
+        =================================
+        Version: ${{ steps.build_info.outputs.mod_version }}
+        Minecraft: ${{ env.MINECRAFT_VERSION }}
+        NeoForge: ${{ env.NEOFORGE_VERSION }}
+        Java: ${{ env.JAVA_VERSION }}
+        Build Date: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
+        Commit: ${{ github.sha }}
+        Branch: ${{ github.ref_name }}
+        EOF
+        
+        echo "📋 Artifacts prepared:"
+        ls -la artifacts/
+    
+    - name: 📤 Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: empanadaland-jar
-        path: dist/
-        retention-days: 30
+        name: empanadaland-${{ steps.build_info.outputs.mod_version }}-mc${{ env.MINECRAFT_VERSION }}
+        path: artifacts/
+        retention-days: 90
+        compression-level: 9
+
+  # ===== RELEASE JOB =====
+  release:
+    name: 🚀 Create Release
+    runs-on: ubuntu-latest
+    needs: [validate, build]
+    if: needs.validate.outputs.should_release == 'true'
+    permissions:
+      contents: write
+      discussions: write
+    
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: 📥 Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: empanadaland-${{ needs.build.outputs.mod_version }}-mc${{ env.MINECRAFT_VERSION }}
+        path: release-artifacts/
+    
+    - name: 🏷️ Update version and create tag
+      run: |
+        NEW_VERSION="${{ needs.validate.outputs.new_version }}"
+        
+        # Update files with new version
+        sed -i "s/mod_version=.*/mod_version=$NEW_VERSION/" gradle.properties
+        sed -i "s/version = .*/version = '$NEW_VERSION'/" build.gradle
+        
+        # Configure git
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        
+        # Commit version bump
+        git add gradle.properties build.gradle
+        git commit -m "🔖 Bump version to $NEW_VERSION" || true
+        
+        # Create and push tag
+        git tag -a "v$NEW_VERSION" -m "Release v$NEW_VERSION"
+        git push origin "v$NEW_VERSION"
+        git push origin master
+    
+    - name: 📝 Generate release notes
+      id: release_notes
+      run: |
+        NEW_VERSION="${{ needs.validate.outputs.new_version }}"
+        PREV_TAG=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "")
+        
+        # Create release notes
+        cat > release_notes.md << 'EOF'
+        # 🥟 EmpanadaLand v$NEW_VERSION
+        
+        ¡Nueva versión de EmpanadaLand disponible! Este mod trae la deliciosa gastronomía chilena a Minecraft.
+        
+        ## 🎮 Compatibilidad
+        - **Minecraft:** ${{ env.MINECRAFT_VERSION }}
+        - **NeoForge:** ${{ env.NEOFORGE_VERSION }}
+        - **Java:** ${{ env.JAVA_VERSION }}+
+        
+        ## 🥟 Contenido del Mod
+        - **3 Empanadas únicas** con efectos especiales
+        - **2 Bebidas tradicionales** chilenas
+        - **3 Ingredientes** para crafting
+        - **8 Recetas** completas de crafting
+        
+        ## 📦 Instalación
+        1. Instala NeoForge ${{ env.NEOFORGE_VERSION }} para Minecraft ${{ env.MINECRAFT_VERSION }}
+        2. Descarga el archivo `.jar` de abajo
+        3. Colócalo en tu carpeta `mods/`
+        4. ¡Disfruta de las empanadas! 🇨🇱
+        
+        ## 🔄 Cambios en esta versión
+        EOF
+        
+        # Add changelog if there's a previous tag
+        if [ -n "$PREV_TAG" ]; then
+          echo "" >> release_notes.md
+          echo "### Commits desde $PREV_TAG:" >> release_notes.md
+          git log --pretty=format:"- %s (%h)" "$PREV_TAG"..HEAD >> release_notes.md
+        else
+          echo "- Versión inicial del mod" >> release_notes.md
+        fi
+        
+        # Add technical details
+        cat >> release_notes.md << 'EOF'
+        
+        ## 🛠️ Información Técnica
+        - Compilado con Java ${{ env.JAVA_VERSION }}
+        - Compatible con servidores y cliente
+        - Sin dependencias adicionales requeridas
+        
+        ## 🐛 Reporte de Bugs
+        Si encuentras algún problema, por favor [abre un issue](https://github.com/DMasterIO/EmpanadaLand/issues).
+        
+        ---
+        **¡Que disfrutes las empanadas en Minecraft!** 🥟✨
+        EOF
+        
+        # Replace variables
+        sed -i "s/\$NEW_VERSION/$NEW_VERSION/g" release_notes.md
+        
+        echo "📋 Release notes generated:"
+        cat release_notes.md
+    
+    - name: 🚀 Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: v${{ needs.validate.outputs.new_version }}
+        name: "🥟 EmpanadaLand v${{ needs.validate.outputs.new_version }}"
+        body_path: release_notes.md
+        files: |
+          release-artifacts/*.jar
+          release-artifacts/build-info.txt
+        draft: false
+        prerelease: false
+        generate_release_notes: true
+        discussion_category_name: "Releases"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: 🎉 Release created
+      run: |
+        echo "🎉 Release v${{ needs.validate.outputs.new_version }} created successfully!"
+        echo "📦 Download: https://github.com/DMasterIO/EmpanadaLand/releases/tag/v${{ needs.validate.outputs.new_version }}"

@@ -3,6 +3,7 @@ package io.dmaster.empanadaland.item;
 
 import net.minecraft.world.level.Level;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Item;
@@ -10,7 +11,7 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.network.chat.Component;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 import io.dmaster.empanadaland.procedures.EmpanadaQuesoPlayerFinishesUsingItemProcedure;
 
@@ -27,11 +28,11 @@ public class EmpanadaQuesoItem extends Item {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack itemstack, Item.TooltipContext context, List<Component> list, TooltipFlag flag) {
-		super.appendHoverText(itemstack, context, list, flag);
-		list.add(Component.literal("Empanada de Queso"));
-		list.add(Component.literal("Jugosa y Caliente"));
-		list.add(Component.literal("Velocidad de niños con café"));
+	public void appendHoverText(ItemStack itemstack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> components, TooltipFlag flag) {
+		super.appendHoverText(itemstack, context, display, components, flag);
+		components.accept(Component.literal("Empanada de Queso"));
+		components.accept(Component.literal("Jugosa y Caliente"));
+		components.accept(Component.literal("Velocidad de niños con café"));
 	}
 
 	@Override
