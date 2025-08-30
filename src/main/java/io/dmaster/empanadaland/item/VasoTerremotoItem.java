@@ -15,19 +15,24 @@ import net.minecraft.network.chat.Component;
 import java.util.List;
 
 import io.dmaster.empanadaland.procedures.VasoTerremotoPlayerFinishesUsingItemProcedure;
-import io.dmaster.empanadaland.init.EmpanadalandModTabs;
 
 public class VasoTerremotoItem extends Item {
 	public VasoTerremotoItem() {
-		super(new Item.Properties().tab(EmpanadalandModTabs.TAB_EMPANADA_LAND).stacksTo(64).rarity(Rarity.UNCOMMON).food((new FoodProperties.Builder()).nutrition(1).saturationMod(0.2f).alwaysEat()
-
+		super(new Item.Properties()
+			.stacksTo(64)
+			.rarity(Rarity.UNCOMMON)
+			.food(new FoodProperties.Builder()
+				.nutrition(1)
+				.saturationModifier(0.2f)
+				.alwaysEdible()
 				.build()));
 	}
 
 	@Override
-	public void appendHoverText(ItemStack itemstack, Level world, List<Component> list, TooltipFlag flag) {
-		super.appendHoverText(itemstack, world, list, flag);
+	public void appendHoverText(ItemStack itemstack, Item.TooltipContext context, List<Component> list, TooltipFlag flag) {
+		super.appendHoverText(itemstack, context, list, flag);
 		list.add(Component.literal("Trago tipico chileno"));
+		list.add(Component.literal("Te da una fuerza increíble"));
 	}
 
 	@Override

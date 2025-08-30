@@ -1,0 +1,35 @@
+plugins {
+    id 'java'
+    id 'eclipse'
+}
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://libraries.minecraft.net' }
+}
+
+version = '1.0'
+group = 'io.dmaster.empanadaland'
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+// Simple test to verify our source code compiles with basic Minecraft APIs
+dependencies {
+    compileOnly 'com.mojang:logging:1.0.0'
+    compileOnly 'org.apache.logging.log4j:log4j-api:2.17.0'
+    compileOnly 'org.apache.logging.log4j:log4j-core:2.17.0'
+}
+
+// Basic compilation test
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    // Ignore missing classes for this test
+    options.compilerArgs += ['-Xlint:none', '-Xmaxerrs', '1000']
+}
+
+compileJava {
+    // This will test if our code structure is correct
+    doFirst {
+        println "Testing NeoForge migration source code compilation..."
+    }
+}

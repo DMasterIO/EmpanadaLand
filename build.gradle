@@ -1,23 +1,35 @@
 buildscript {
     repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
+        maven { url = 'https://maven.neoforged.net/releases' }
         mavenCentral()
+        gradlePluginPortal()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath 'net.neoforged.gradle:userdev:7.0.57'
     }
 }
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'eclipse'
+
+plugins {
+    id 'eclipse'
+}
+
+apply plugin: 'net.neoforged.gradle.userdev'
+
+repositories {
+    maven { url = 'https://maven.neoforged.net/releases' }
+    mavenCentral()
+}
 
 version = '1.0'
 group = 'io.dmaster.empanadaland'
-archivesBaseName = 'empanadaland'
+base {
+    archivesName = 'empanadaland'
+}
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 minecraft {
-    mappings channel: 'official', version: '1.19.2'
+    mappings channel: 'official', version: '1.21.1'
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -25,11 +37,11 @@ minecraft {
         client {
             workingDirectory project.file('run')
 
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
+            property 'neoforge.logging.markers', 'REGISTRIES'
+            property 'neoforge.logging.console.level', 'debug'
 
             mods {
-                examplemod {
+                empanadaland {
                     source sourceSets.main
                 }
             }
@@ -38,11 +50,11 @@ minecraft {
         server {
             workingDirectory project.file('run')
 
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
+            property 'neoforge.logging.markers', 'REGISTRIES'
+            property 'neoforge.logging.console.level', 'debug'
 
             mods {
-                examplemod {
+                empanadaland {
                     source sourceSets.main
                 }
             }
@@ -51,7 +63,7 @@ minecraft {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.19.2-43.2.0'
+    implementation 'net.neoforged:neoforge:21.1.41'
 }
 
 tasks.withType(JavaCompile).configureEach {

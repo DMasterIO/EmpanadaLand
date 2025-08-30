@@ -13,16 +13,23 @@ import net.minecraft.network.chat.Component;
 import java.util.List;
 
 import io.dmaster.empanadaland.procedures.EmpanadaPastelChocloPlayerFinishesUsingItemProcedure;
-import io.dmaster.empanadaland.init.EmpanadalandModTabs;
 
 public class EmpanadaPastelChocloItem extends Item {
 	public EmpanadaPastelChocloItem() {
-		super(new Item.Properties().tab(EmpanadalandModTabs.TAB_EMPANADA_LAND).stacksTo(64).rarity(Rarity.RARE).food((new FoodProperties.Builder()).nutrition(5).saturationMod(0.6f).alwaysEat().meat().build()));
+		super(new Item.Properties()
+			.stacksTo(64)
+			.rarity(Rarity.RARE)
+			.food(new FoodProperties.Builder()
+				.nutrition(5)
+				.saturationModifier(0.6f)
+				.alwaysEdible()
+				.meat()
+				.build()));
 	}
 
 	@Override
-	public void appendHoverText(ItemStack itemstack, Level world, List<Component> list, TooltipFlag flag) {
-		super.appendHoverText(itemstack, world, list, flag);
+	public void appendHoverText(ItemStack itemstack, Item.TooltipContext context, List<Component> list, TooltipFlag flag) {
+		super.appendHoverText(itemstack, context, list, flag);
 		list.add(Component.literal("Empanada Pastel de Choclo"));
 		list.add(Component.literal("El mejor invento"));
 		list.add(Component.literal("Visi\u00F3n Nocturna"));
