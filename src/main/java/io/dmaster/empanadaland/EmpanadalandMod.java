@@ -16,22 +16,12 @@ package io.dmaster.empanadaland;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-import net.neoforged.neoforge.network.simple.SimpleChannel;
-import net.neoforged.neoforge.network.NetworkRegistry;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.common.NeoForge;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.network.FriendlyByteBuf;
-
-import java.util.function.Supplier;
-import java.util.function.Function;
-import java.util.function.BiConsumer;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.List;
 import java.util.Collection;
@@ -54,19 +44,10 @@ public class EmpanadalandMod {
 
 	}
 
-	private static final String PROTOCOL_VERSION = "1";
-	public static final SimpleChannel PACKET_HANDLER = NetworkRegistry.newSimpleChannel(ResourceLocation.fromNamespaceAndPath(MODID, MODID), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
-	private static int messageID = 0;
-
-	public static <T> void addNetworkMessage(Class<T> messageType, BiConsumer<T, FriendlyByteBuf> encoder, Function<FriendlyByteBuf, T> decoder, BiConsumer<T, Supplier<RegisterPayloadHandlersEvent.Context>> messageConsumer) {
-		PACKET_HANDLER.registerMessage(messageID, messageType, encoder, decoder, messageConsumer);
-		messageID++;
-	}
-
 	private static final Collection<AbstractMap.SimpleEntry<Runnable, Integer>> workQueue = new ConcurrentLinkedQueue<>();
 
 	public static void queueServerWork(int tick, Runnable action) {
-		workQueue.add(new AbstractMap.SimpleEntry(action, tick));
+		workQueue.add(new AbstractMap.SimpleEntry<>(action, tick));
 	}
 
 	@SubscribeEvent

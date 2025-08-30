@@ -1,19 +1,7 @@
-buildscript {
-    repositories {
-        maven { url = 'https://maven.neoforged.net/releases' }
-        mavenCentral()
-        gradlePluginPortal()
-    }
-    dependencies {
-        classpath 'net.neoforged.gradle:userdev:7.0.57'
-    }
-}
-
 plugins {
     id 'eclipse'
+    id 'net.neoforged.gradle.userdev' version '7.0.57'
 }
-
-apply plugin: 'net.neoforged.gradle.userdev'
 
 repositories {
     maven { url = 'https://maven.neoforged.net/releases' }
